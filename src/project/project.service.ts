@@ -6,24 +6,12 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 @Injectable()
 export class ProjectService {
   constructor(private prisma: PrismaService) {}
-  create(createProjectDto: CreateProjectDto) {}
+  async create(createProjectDto: CreateProjectDto) {
+    return await this.prisma.project.create({ data: createProjectDto });
+  }
 
   findAll() {
     return `This action returns all project`;
-  }
-
-  async findPedingByMember(userId: string) {
-    console.log(userId);
-    const projects = await this.prisma.projectMembers.findMany({
-      where: {
-        userId: parseInt(userId),
-      },
-      select: {
-        user: false,
-        project: true,
-      },
-    });
-    return projects;
   }
 
   findOne(id: number) {

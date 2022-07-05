@@ -9,9 +9,10 @@ import { OccupationModule } from './occupation/occupation.module';
 import { ProjectModule } from './project/project.module';
 import { NewsModule } from './news/news.module';
 import { AppoinmentTimeModule } from './appoinment-time/appoinment-time.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
-  imports: [UserModule, AuthModule, TeamModule, OccupationModule, ProjectModule, NewsModule, AppoinmentTimeModule],
+  imports: [UserModule, AuthModule, TeamModule, OccupationModule, ProjectModule, NewsModule, AppoinmentTimeModule, TaskModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

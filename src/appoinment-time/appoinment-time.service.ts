@@ -73,8 +73,7 @@ export class AppoinmentTimeService {
 
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    console.log(firstDay.toISOString());
-    console.log(lastDay.toISOString());
+
     const allAppoimentsMonth = await this.prisma.appointmentTime.findMany({
       where: {
         userId: parseInt(userId),

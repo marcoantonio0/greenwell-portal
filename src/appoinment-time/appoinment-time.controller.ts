@@ -28,7 +28,6 @@ export class AppoinmentTimeController {
   @UseGuards(JwtAuthGuard)
   @Get()
   getTodayAppoiments(@Req() req: Request) {
-    console.log(req.user);
     return this.appoinmentTimeService.getAppoimentsToday(req.user['userId']);
   }
 

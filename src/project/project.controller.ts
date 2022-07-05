@@ -29,12 +29,6 @@ export class ProjectController {
     return this.projectService.update(+id, updateProjectDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('user/pending')
-  getPendingProjectsByMemberId(@Req() req: Request){
-    return this.projectService.findPedingByMember(req.user['userId']);
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.projectService.remove(+id);

@@ -9,5 +9,6 @@ export class Project implements Prisma.ProjectUncheckedCreateInput {
   status?: ProjectStatus;
   createdAt?: string | Date;
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutProjectInput;
-  members?: Prisma.projectMembersUncheckedCreateNestedManyWithoutProjectInput;
+  updatedAt?: string | Date;
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput;
 }

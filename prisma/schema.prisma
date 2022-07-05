@@ -29,7 +29,7 @@ model User {
   notifications Notification[]
   projectManager Project[]
   comments Comment[]
-  projectMember projectMembers[]
+  tasks Task[]
 }
 
 model Team {
@@ -69,39 +69,57 @@ model Project {
   description String?
   teamId Int
   deadline DateTime?
-  status ProjectStatus @default(INACTIVE)
+  status ProjectStatus @default(BACKLOG)
   createdAt DateTime @default(now())
   comments Comment[]
-  members projectMembers[]
+  updatedAt DateTime?
   team   Team?  @relation( fields: [teamId], references: [id])
+  tasks Task[]
 }
 
-model projectMembers {
-  projectId Int
-  userId Int
+model Task {
+  id     Int  @id @default(autoincrement())
+  title String
+  description String?
   createdAt DateTime @default(now())
-  user User?  @relation( fields: [userId], references: [id])
-  project Project?  @relation( fields: [projectId], references: [id])
+  updatedAt DateTime?
+  status TaskStatus @default(INACTIVE)
+  projectId Int
+  project Project @relation(fields: [projectId], references: [id])
+  hoursSpended Int?
+  userId Int
+  points Int?
+  user User @relation(fields: [userId], references: [id])
+  comments Comment[]
+}
 
-  @@id([projectId, userId])
+enum TaskStatus {
+  INACTIVE
+  WORKING
+  IN_PROGRESS
+  TESTING
+  BLOCKED
+  COMPLETED
 }
 
 enum ProjectStatus {
-  ACTIVE
-  INACTIVE
-  BLOCKED
+  BACKLOG
+  WORKING
+  IN_PROGRESS
+  COMPLETE
   CANCELED
-  PENDING
 }
 
 model Comment {
   id     Int  @id @default(autoincrement())
-  projectId Int
   content String
   authorId Int
   author   User @relation(fields: [authorId], references: [id])
-  project   Project @relation(fields: [projectId], references: [id])
   createdAt DateTime @default(now())
+  projectId Int?
+  project   Project? @relation(fields: [projectId], references: [id])
+  taskId Int?
+  task   Task? @relation(fields: [taskId], references: [id])
 }
 
 
