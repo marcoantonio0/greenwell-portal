@@ -73,6 +73,7 @@ model Project {
   createdAt DateTime @default(now())
   comments Comment[]
   updatedAt DateTime?
+  pos Float? @default(0)
   team   Team?  @relation( fields: [teamId], references: [id])
   tasks Task[]
 }

@@ -10,16 +10,66 @@ export class ProjectService {
     return await this.prisma.project.create({ data: createProjectDto });
   }
 
-  findAll() {
-    return `This action returns all project`;
+  async findAll() {
+    const projectOrdenate = [
+      {
+        type: 'BACKLOG',
+        items: [],
+      },
+      {
+        type: 'WORKING',
+        items: [],
+      },
+      {
+        type: 'IN_PROGRESS',
+        items: [],
+      },
+      {
+        type: 'COMPLETE',
+        items: [],
+      },
+    ];
+    const projects = await this.prisma.project.findMany({
+      select: {
+        manager: true,
+        createdAt: true,
+        deadline: true,
+        description: true,
+        status: true,
+        updatedAt: true,
+        id: true,
+        name: true,
+        pos: true,
+        _count: {
+          select: {
+            comments: true,
+            tasks: true,
+          },
+        },
+      },
+      orderBy: { pos: 'asc' },
+    });
+    if (projects.length > 0) {
+      projects.forEach((project) => {
+        projectOrdenate.forEach((order) => {
+          if (project.status == order.type) {
+            order.items.push(project);
+          }
+        });
+      });
+    }
+    return projectOrdenate;
   }
 
   findOne(id: number) {
     return `This action returns a #${id} project`;
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(id: number, updateProjectDto: UpdateProjectDto) {
+    return await this.prisma.project.update({
+      where: { id },
+      data: updateProjectDto,
+    });
   }
 
   remove(id: number) {

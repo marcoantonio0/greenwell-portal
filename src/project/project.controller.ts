@@ -1,5 +1,15 @@
 import { JwtAuthGuard } from './../auth/jwt-auth.guard';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -14,7 +24,7 @@ export class ProjectController {
     return this.projectService.create(createProjectDto);
   }
 
-  @Get()
+  @Get('board')
   findAll() {
     return this.projectService.findAll();
   }
