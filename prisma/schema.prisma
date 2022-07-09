@@ -11,25 +11,60 @@ datasource db {
 }
 
 model User {
-  id               Int               @id @default(autoincrement())
-  name             String
-  last_name        String
-  email            String            @unique
-  password         String
-  occupationId     Int?
+  id           Int     @id @default(autoincrement())
+  name         String
+  last_name    String
+  email        String  @unique
+  password     String
+  occupationId Int?
+  active       Boolean @default(true)
+  isAdmin      Boolean @default(false)
+  teamId       Int?
+  cpf          String?
+
   occupation       Occupation?       @relation(fields: [occupationId], references: [id])
-  phone            String?
-  active           Boolean @default(true)
-  isAdmin          Boolean @default(false)
-  teamId           Int?
   team             Team?             @relation("currentUserTeam", fields: [teamId], references: [id])
-  appointmentTimes appointmentTime[]
   managerAt        Team[]            @relation("currentManagerTeam")
-  news News[]
-  notifications Notification[]
-  projectManager Project[]
-  comments Comment[]
-  tasks Task[]
+  appointmentTimes appointmentTime[]
+  news             News[]
+  notifications    Notification[]
+  projectManager   Project[]
+  comments         Comment[]
+  tasks            Task[]
+  address          Address?
+  profile          Profile?
+}
+
+model Profile {
+  id     Int     @id @default(autoincrement())
+  bio    String?
+  linkedin String?
+  github String?
+  website String?
+  phone  String?
+  userId Int     @unique
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+model Address {
+  id           Int     @id @default(autoincrement())
+  state        String
+  city         String
+  address      String
+  complement   String?
+  cep          String
+  number       String
+  neighborhood String
+  userId       Int     @unique
+  user         User    @relation(fields: [userId], references: [id])
+}
+
+model PreUser {
+  id    Int     @id @default(autoincrement())
+  name  String?
+  teamId Int?
+  team  Team? @relation(fields: [teamId], references: [id])
+  email String  @unique
 }
 
 model Team {
@@ -38,16 +73,16 @@ model Team {
   managerId Int?
   manager   User?  @relation("currentManagerTeam", fields: [managerId], references: [id])
   user      User[] @relation("currentUserTeam")
-  
+  preUser   PreUser[]
   projects Project[]
 }
 
 model appointmentTime {
-  id     Int  @id @default(autoincrement())
-  time  DateTime @default(now())
+  id     Int                 @id @default(autoincrement())
+  time   DateTime            @default(now())
   userId Int
-  type  appointmentTimeType
-  user   User @relation(fields: [userId], references: [id])
+  type   appointmentTimeType
+  user   User                @relation(fields: [userId], references: [id])
 }
 
 enum appointmentTimeType {
@@ -56,49 +91,55 @@ enum appointmentTimeType {
 }
 
 model Occupation {
-  id     Int  @id @default(autoincrement())
-  name   String
+  id    Int    @id @default(autoincrement())
+  name  String
   users User[]
 }
 
 model Project {
-  id     Int  @id @default(autoincrement())
-  name String
-  managerId Int?
-  manager User? @relation( fields: [managerId], references: [id])
+  id          Int           @id @default(autoincrement())
+  name        String
+  managerId   Int?
+  manager     User?         @relation(fields: [managerId], references: [id])
   description String?
-  teamId Int
-  deadline DateTime?
-  status ProjectStatus @default(BACKLOG)
-  createdAt DateTime @default(now())
-  comments Comment[]
-  updatedAt DateTime?
-  pos Float? @default(0)
-  team   Team?  @relation( fields: [teamId], references: [id])
-  tasks Task[]
+  teamId      Int
+  deadline    DateTime?
+  status      ProjectStatus @default(BACKLOG)
+  createdAt   DateTime      @default(now())
+  comments    Comment[]
+  updatedAt   DateTime?
+  pos         Float?        @default(0)
+  team        Team?         @relation(fields: [teamId], references: [id])
+  tasks       Task[]
 }
 
 model Task {
-  id     Int  @id @default(autoincrement())
-  title String
-  description String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime?
-  status TaskStatus @default(INACTIVE)
-  projectId Int
-  project Project @relation(fields: [projectId], references: [id])
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime?
+  status       TaskStatus @default(INACTIVE)
+  projectId    Int
+  project      Project    @relation(fields: [projectId], references: [id])
   hoursSpended Int?
-  userId Int
-  points Int?
-  user User @relation(fields: [userId], references: [id])
-  comments Comment[]
+  userId       Int
+  points       Int?
+  type         TaskType   @default(TASK)
+  user         User       @relation(fields: [userId], references: [id])
+  comments     Comment[]
+}
+
+enum TaskType {
+  BUG
+  TASK
 }
 
 enum TaskStatus {
   INACTIVE
   WORKING
   IN_PROGRESS
-  TESTING
+  DEV_TESTING
   BLOCKED
   COMPLETED
 }
@@ -112,33 +153,32 @@ enum ProjectStatus {
 }
 
 model Comment {
-  id     Int  @id @default(autoincrement())
-  content String
-  authorId Int
-  author   User @relation(fields: [authorId], references: [id])
+  id        Int      @id @default(autoincrement())
+  content   String
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
   projectId Int?
   project   Project? @relation(fields: [projectId], references: [id])
-  taskId Int?
-  task   Task? @relation(fields: [taskId], references: [id])
+  taskId    Int?
+  task      Task?    @relation(fields: [taskId], references: [id])
 }
 
-
 model News {
-  id     Int  @id @default(autoincrement())
-  title String
-  subTitle String?
-  content String
-  authorId Int?
+  id        Int      @id @default(autoincrement())
+  title     String
+  subTitle  String?
+  content   String
+  authorId  Int?
   createdAt DateTime @default(now())
-  author  User?  @relation( fields: [authorId], references: [id])
+  author    User?    @relation(fields: [authorId], references: [id])
 }
 
 model globalNotification {
-  id     Int  @id @default(autoincrement())
-  title String?
+  id      Int              @id @default(autoincrement())
+  title   String?
   content String
-  type NotificationType @default(COMMOM)
+  type    NotificationType @default(COMMOM)
 }
 
 enum NotificationType {
@@ -150,13 +190,12 @@ enum NotificationType {
 }
 
 model Notification {
-  id     Int  @id @default(autoincrement())
-  title String
-  content String
-  type NotificationType @default(INFO)
-  userId Int
-  readed Boolean @default(false)
-  createdAt DateTime @default(now())
-  user  User @relation(fields: [userId], references: [id])
+  id        Int              @id @default(autoincrement())
+  title     String
+  content   String
+  type      NotificationType @default(INFO)
+  userId    Int
+  readed    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id])
 }
-

@@ -23,7 +23,7 @@ export class TaskService {
       where: {
         userId: parseInt(userId),
         status: {
-          in: ['IN_PROGRESS', 'WORKING', 'TESTING'],
+          in: ['IN_PROGRESS', 'WORKING', 'DEV_TESTING'],
         },
       },
       select: {

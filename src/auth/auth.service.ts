@@ -3,6 +3,7 @@ import { UserService } from './../user/user.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { ValidateDto } from './dto/valide.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,27 @@ export class AuthService {
       return result;
     }
     return null;
+  }
+
+  async valideEmail(data: ValidateDto): Promise<any> {
+    const user = await this.userService.findOne(data.email);
+    let preUser;
+    if (!user) {
+      preUser = await this.userService.findPreUser(data.email);
+    } else {
+      return { email: user.email, isValid: true };
+    }
+    console.log(preUser);
+    if (!preUser) {
+      throw new NotFoundException(
+        'Este e-mail não corresponde a uma conta cadastrada.',
+      );
+    } else {
+      return {
+        ...preUser,
+        isPreUser: true,
+      };
+    }
   }
 
   async login(user: any) {
@@ -50,7 +72,6 @@ export class AuthService {
           },
         },
         notifications: true,
-        phone: true,
         occupation: true,
       },
     });
