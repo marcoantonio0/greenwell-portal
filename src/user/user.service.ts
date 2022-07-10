@@ -1,3 +1,4 @@
+import { CreatePreUserDto } from './dto/create-pre-user.dto';
 import { PrismaService } from './../_prisma/_prisma.service';
 import {
   BadRequestException,
@@ -84,6 +85,49 @@ export class UserService {
 
   async findOne(email: string) {
     return await this.prisma.user.findUnique({ where: { email } });
+  }
+
+  async list() {
+    return await this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        last_name: true,
+        active: true,
+        email: true,
+        isAdmin: true,
+        team: true,
+        occupation: true,
+        profile: true,
+        address: true,
+      },
+    });
+  }
+
+  async listPreUser() {
+    return await this.prisma.preUser.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        team: true,
+      },
+    });
+  }
+
+  async createPreUser(createPreUser: CreatePreUserDto) {
+    try {
+      await this.prisma.preUser.create({ data: createPreUser });
+      return new HttpException(
+        'Pré-usuario criado com sucesso.',
+        HttpStatus.OK,
+      );
+    } catch (error) {
+      if (error.meta.target[0] == 'email') {
+        throw new BadRequestException('E-mail já cadastrado.');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
   async findPreUser(email: string) {

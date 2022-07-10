@@ -89,6 +89,7 @@ export class AppoinmentTimeService {
       allAppoimentsMonth.forEach((appoiment, i) => {
         if (
           appoiment.type == 'ENTRY' &&
+          i != allAppoimentsMonth.length-1 &&
           allAppoimentsMonth[i + 1].type == 'OUT'
         ) {
           const start = moment(appoiment.time);

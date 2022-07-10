@@ -31,15 +31,26 @@ export class ProjectService {
     ];
     const projects = await this.prisma.project.findMany({
       select: {
-        manager: true,
+        manager: {
+          select: {
+            name: true,
+            last_name: true,
+            team: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
         createdAt: true,
         deadline: true,
         description: true,
         status: true,
         updatedAt: true,
         id: true,
-        name: true,
+        title: true,
         pos: true,
+        tasks: true,
         _count: {
           select: {
             comments: true,
@@ -59,6 +70,29 @@ export class ProjectService {
       });
     }
     return projectOrdenate;
+  }
+
+  async findAllProjectByUser(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+    });
+    return await this.prisma.project.findMany({
+      where: {
+        teamId: {
+          in: [user.teamId],
+        },
+      },
+      select: {
+        createdAt: true,
+        deadline: true,
+        title: true,
+        status: true,
+        id: true,
+      },
+      orderBy: {
+        pos: 'asc',
+      },
+    });
   }
 
   findOne(id: number) {

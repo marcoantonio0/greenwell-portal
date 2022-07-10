@@ -24,6 +24,13 @@ export class ProjectController {
     return this.projectService.create(createProjectDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  findAllByUser(@Req() req: Request) {
+    return this.projectService.findAllProjectByUser(req.user['userId']);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('board')
   findAll() {
     return this.projectService.findAll();

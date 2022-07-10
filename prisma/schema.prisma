@@ -98,7 +98,7 @@ model Occupation {
 
 model Project {
   id          Int           @id @default(autoincrement())
-  name        String
+  title        String
   managerId   Int?
   manager     User?         @relation(fields: [managerId], references: [id])
   description String?

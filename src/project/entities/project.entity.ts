@@ -1,7 +1,8 @@
 import { Prisma, ProjectStatus } from '@prisma/client';
 export class Project implements Prisma.ProjectUncheckedCreateInput {
+  title: string;
+  pos?: number;
   id?: number;
-  name: string;
   managerId?: number;
   description?: string;
   teamId: number;
